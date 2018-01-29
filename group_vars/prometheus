@@ -1,0 +1,6 @@
+domain: www.example.org
+# certificate_file: /etc/letsencrypt/live/www.example.com/fullchain.pem
+# certificate_key_file: /etc/letsencrypt/live/www.example.org/privkey.pem
+
+# apache2_conf_include:
+#  - /etc/letsencrypt/options-ssl-apache.conf

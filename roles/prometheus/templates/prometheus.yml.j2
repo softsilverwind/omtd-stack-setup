@@ -1,0 +1,14 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 5s
+  scrape_timeout: 10s
+
+scrape_configs:
+  - job_name: 'slaves'
+    scrape_interval: 5s
+    target_groups:
+      - targets:
+{%for host in groups['mesos_slaves']%}
+        - {{ host }}:8080
+        - {{ host }}:9100
+{%endfor%}

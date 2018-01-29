@@ -1,0 +1,58 @@
+- name: Install prometheus
+  apt:
+    name: prometheus
+    state: latest
+  register: prometheus_installed
+
+- name: Install prometheus node exporter
+  apt:
+    name: prometheus-node-exporter
+    state: latest
+  register: prometheus_node_exporter_installed
+
+- name: Create prometheus config file
+  template:
+    src: prometheus.yml.j2
+    dest: "{{ prometheus_config_dir }}/prometheus.yml"
+  notify: restart prometheus
+
+- name: Update default prometheus
+  template:
+    src: default-prometheus.j2
+    dest: "/etc/default/prometheus"
+  notify: restart prometheus
+
+- name: Update default prometheus node exporter
+  template:
+    src: default-prometheus-node-exporter.j2
+    dest: "/etc/default/prometheus-node-exporter"
+  notify: restart prometheus
+
+- name: Install apache2
+  apt: name=apache2 state=installed
+  register: apache2_installed
+
+- name: Enable Reverse proxy
+  apache2_module: name="{{ item }}" state=present
+  with_items:
+    - proxy
+    - proxy_http
+    - rewrite
+    - ssl
+  notify: restart apache2
+
+- name: Setup Reverse Proxy for prometheus
+  template:
+    src: 000-default-ssl.conf.j2
+    dest: "{{ server_root }}/sites-available/000-default-ssl.conf"
+  notify: restart apache2
+
+- name: Enable SSL site
+  command: a2ensite 000-default-ssl
+  notify: restart apache2
+
+- name: Redirect to SSL
+  template:
+    src: 000-default.conf.j2
+    dest: "{{ server_root }}/sites-available/000-default.conf"
+  notify: restart apache2

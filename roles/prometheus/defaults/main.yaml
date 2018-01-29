@@ -1,0 +1,10 @@
+# Prometheus
+prometheus_config_dir: /etc/prometheus
+
+# Apache
+server_root: /etc/apache2
+domain: www.example.org
+certificate_file: "{{ server_root }}/conf/domain.crt"
+certificate_key_file: "{{ server_root }}/conf/domain.key"
+# apache2_conf_include:
+#   - /etc/letsencrypt/options-ssl-apache.conf
