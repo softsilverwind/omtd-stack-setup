@@ -56,3 +56,8 @@
   remote_user: root
   roles:
     - prometheus
+
+- hosts: prometheus_nodes
+  remote_user: root
+  roles:
+    - prometheus-nodes

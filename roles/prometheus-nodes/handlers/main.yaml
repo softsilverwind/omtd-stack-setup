@@ -1,0 +1,6 @@
+- name: update apt
+  command: apt-get update
+- name: systemd about cadvisor
+  command: systemctl daemon-reload && systemctl enable cadvisor && systemctl start cadvisor
+- name: update grub2
+  command: update-grub2

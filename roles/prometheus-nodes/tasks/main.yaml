@@ -1,0 +1,43 @@
+- name: Setup jessie-backports
+  lineinfile:
+    path: /etc/apt/sources.list
+    line: 'deb http://ftp.debian.org/debian jessie-backports main'
+  notify: update apt
+
+- name: Install requirements
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - docker-engine
+
+- name: Install prometheus node exporter
+  apt:
+    name: prometheus-node-exporter
+    state: latest
+  register: prometheus_node_exporter_installed
+
+- name: Install cadvisor from Docker
+  shell: |
+    docker create \
+      --volume=/:/rootfs:ro \
+      --volume=/var/run:/var/run:rw \
+      --volume=/sys:/sys:ro \
+      --volume=/var/lib/docker/:/var/lib/docker:ro \
+      --volume=/dev/disk/:/dev/disk:ro \
+      --publish=8080:8080 --name=cadvisor google/cadvisor:latest
+  args:
+    executable: /bin/bash
+  register: cadvisor_installed
+
+- name: Setup cadvisor
+  template:
+    src: cadvisor.service.j2
+    dest: "/etc/systemd/system/cadvisor.service"
+  notify: systemd about cadvisor
+
+- name: Adjust GRUB
+  lineinfile:
+    path: /etc/default/grub
+    line: 'GRUB_CMDLINE_LINUX="cgroup_enable=memory"'
+  notify: update grub2

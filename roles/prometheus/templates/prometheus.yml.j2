@@ -8,7 +8,7 @@ scrape_configs:
     scrape_interval: 5s
     target_groups:
       - targets:
-{%for host in groups['mesos_slaves']%}
+{%for host in groups['prometheus_nodes']%}
         - {{ host }}:8080
         - {{ host }}:9100
 {%endfor%}
