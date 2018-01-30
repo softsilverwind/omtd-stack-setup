@@ -1,0 +1,25 @@
+- name: Grafana apt key
+  shell: |
+    curl https://packagecloud.io/gpg.key | apt-key add -
+  args:
+    executable: /bin/bash
+  register: grafana_key_added
+
+- name: Add grafana apt source
+  lineinfile:
+    path: '/etc/apt/sources.list'
+    line: 'deb https://packagecloud.io/grafana/stable/debian/ jessie main'
+  notify: update apt
+
+- name: Install Grafana
+  apt:
+    name: grafana
+    state: latest
+  register: grafana_installed
+
+- name: Setup grafana.ini
+  template:
+    src: grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+    force: yes
+  notify: restart grafana

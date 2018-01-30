@@ -51,3 +51,8 @@
           exported_dir: "{{ hostvars[groups['nfs_server'][0]].exported_dir }}"
   roles:
       - nfs-clients
+
+- hosts: grafana
+  remote_user: root
+  roles:
+      - grafana
