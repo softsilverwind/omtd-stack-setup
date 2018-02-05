@@ -14,8 +14,8 @@
 
 	SSLCertificateFile {{certificate_file}}
 	SSLCertificateKeyFile {{certificate_key_file}}
-	{% for included in apache2_conf_include %}
-Include {{ included }}
+	{% for included in apache2_conf_include or [] %}
+	Include {{ included }}
 	{% endfor %}
 	ServerName {{ domain }}
 </VirtualHost>
